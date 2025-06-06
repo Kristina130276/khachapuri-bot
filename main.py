@@ -1,8 +1,9 @@
+import os
 import telebot
 from keep_alive import keep_alive
 from telebot import types
 
-API_TOKEN = "BOT_TOKEN"
+API_TOKEN = os.getenv ("BOT_TOKEN")
 bot = telebot.TeleBot(API_TOKEN)
 
 @bot.message_handler(commands=["start"])
