@@ -38,4 +38,5 @@ def index():
 
 # Удаляем polling (он нужен только на Replit и локально)
 # bot.polling() — больше не нужен
-
+if __name__ == "__main__":
+    app.run (host="0.0.0.0", port=10000)
