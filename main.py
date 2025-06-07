@@ -6,25 +6,47 @@ API_TOKEN = os.getenv("API_TOKEN")
 bot = telebot.TeleBot(API_TOKEN)
 app = Flask(__name__)
 
-# Кнопки меню
-markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
-markup.row("📋 Меню")
+# Выбор языка
+@bot.message_handler(commands=['start'])
+def send_welcome(message):
+    markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+    markup.add("🇷🇺 Русский", "🇮🇱 עברית")
+    bot.send_message(message.chat.id, "Пожалуйста, выберите язык / אנא בחר שפה", reply_markup=markup)
 
-@bot.message_handler(commands=["start"])
-def start(message):
-    bot.send_message(message.chat.id, "Привет! Выберите действие:", reply_markup=markup)
+# После выбора языка — меню
+@bot.message_handler(func=lambda message: message.text in ["🇷🇺 Русский", "🇮🇱 עברית"])
+def show_menu(message):
+    lang = message.text
+    markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup.add("📋 Меню") if lang == "🇷🇺 Русский" else markup.add("📋 תפריט")
+    bot.send_message(message.chat.id, "Выберите действие:" if lang == "🇷🇺 Русский" else "בחר פעולה:", reply_markup=markup)
 
-@bot.message_handler(func=lambda m: True)
-def echo_all(message):
-    if message.text == "📋 Меню":
+# Обработка меню
+@bot.message_handler(func=lambda message: message.text in ["📋 Меню", "📋 תפריט"])
+def show_photos(message):
+    try:
         with open("images/khachapuri_boat.jpg", "rb") as photo1:
-            bot.send_photo(message.chat.id, photo1, caption="🥚 Хачапури-лодочка\n💰 50 шекелей\n🕒 15:00–21:00")
+            bot.send_photo(message.chat.id, photo1, caption="⛵ Хачапури-лодочка\n💰 50 шекелей\n🕒 15:00–21:00")
         with open("images/khachapuri_round.jpg", "rb") as photo2:
             bot.send_photo(message.chat.id, photo2, caption="🍳 Хачапури-круглый\n💰 50 шекелей\n🕒 15:00–21:00")
-    else:
-        bot.send_message(message.chat.id, "Пожалуйста, выберите из меню.")
+    except Exception as e:
+        bot.send_message(message.chat.id, "Ошибка при загрузке изображений.")
 
-# Webhook обработка (для Render)
+    # Кнопка для отправки телефона
+    kb = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+    button = telebot.types.KeyboardButton(text="📞 Оставить номер", request_contact=True)
+    kb.add(button)
+    bot.send_message(message.chat.id, "Хотите, чтобы мы вам перезвонили?", reply_markup=kb)
+
+# Получение телефона
+@bot.message_handler(content_types=['contact'])
+def get_contact(message):
+    phone_number = message.contact.phone_number
+    bot.send_message(message.chat.id, "Спасибо! Мы скоро с вами свяжемся.")
+    # уведомление тебе
+    bot.send_message(1485434212, f"Новый клиент! Номер: {phone_number}")
+
+# Webhook обработка
 @app.route("/", methods=["POST"])
 def webhook():
     update = telebot.types.Update.de_json(request.stream.read().decode("utf-8"))
