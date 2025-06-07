@@ -17,10 +17,10 @@ def start(message):
 @bot.message_handler(func=lambda m: True)
 def echo_all(message):
     if message.text == "📋 Меню":
-        bot.send_message(
-            message.chat.id,
-            "🥟 Хачапури круглый – 50 шекелей\n🕒 15:00–21:00"
-        )
+        with open("images/khachapuri_boat.jpg", "rb") as photo1:
+            bot.send_photo(message.chat.id, photo1, caption="🥚 Хачапури-лодочка\n💰 50 шекелей\n🕒 15:00–21:00")
+        with open("images/khachapuri_round.jpg", "rb") as photo2:
+            bot.send_photo(message.chat.id, photo2, caption="🍳 Хачапури-круглый\n💰 50 шекелей\n🕒 15:00–21:00")
     else:
         bot.send_message(message.chat.id, "Пожалуйста, выберите из меню.")
 
@@ -36,7 +36,5 @@ def webhook():
 def index():
     return "Бот работает!", 200
 
-# Удаляем polling (он нужен только на Replit и локально)
-# bot.polling() — больше не нужен
 if __name__ == "__main__":
-    app.run (host="0.0.0.0", port=10000)
+    app.run(host="0.0.0.0", port=10000)
