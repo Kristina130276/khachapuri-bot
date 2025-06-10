@@ -22,17 +22,23 @@ def show_menu(message):
     bot.send_message(message.chat.id, "Выберите действие:" if lang == "🇷🇺 Русский" else "בחר פעולה:", reply_markup=markup)
 
 # Обработка меню
-@bot.message_handler(func=lambda message: message.text in ["📋 Меню", "📋 תפריט"])
+@bot.message_handler(func=lambda message: message.text in ["📋 Меню", "📋 תַפְרִיט"])
 def show_photos(message):
+    lang = message.text  # определяем язык по кнопке
     try:
         with open("images/khachapuri_boat.jpg", "rb") as photo1:
-            bot.send_photo(message.chat.id, photo1, caption="⛵ Хачапури-лодочка\n💰 50 шекелей\n🕒 15:00–21:00")
+            caption1 = "⛰️ Хачапури-лодочка\n💰 50 шекелей\n🕒 15:00–21:00" if lang == "📋 Меню" else "⛰️ חצ'אפורי סירה\n💰 50 ש\"ח\n🕒 15:00–21:00"
+            bot.send_photo(message.chat.id, photo1, caption=caption1)
+
         with open("images/khachapuri_round.jpg", "rb") as photo2:
-            bot.send_photo(message.chat.id, photo2, caption="🍳 Хачапури-круглый\n💰 50 шекелей\n🕒 15:00–21:00")
+            caption2 = "🍳 Хачапури-круглый\n💰 50 шекелей\n🕒 15:00–21:00" if lang == "📋 Меню" else "🍳 חצ'אפורי עגול\n💰 50 ש\"ח\n🕒 15:00–21:00"
+            bot.send_photo(message.chat.id, photo2, caption=caption2)
+
         with open("images/pizza.jpg", "rb") as photo3:
-            bot.send_photo(message.chat.id, photo3, caption="🍕 Пицца\n💰 50 шекелей\n🕒 15:00–21:00")
-        
-    except Exception as e:
+            caption3 = "🍕 Пицца\n💰 50 шекелей\n🕒 15:00–21:00" if lang == "📋 Меню" else "🍕 פיצה\n💰 50 ש\"ח\n🕒 15:00–21:00"
+            bot.send_photo(message.chat.id, photo3, caption=caption3)
+
+       except Exception as e:
         bot.send_message(message.chat.id, "Ошибка при загрузке изображений.")
 
     # Кнопка для отправки телефона
