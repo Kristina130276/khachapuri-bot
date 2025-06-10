@@ -19,7 +19,11 @@ def show_menu(message):
     lang = message.text
     markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add("📋 Меню") if lang == "🇷🇺 Русский" else markup.add("📋 תפריט")
-    bot.send_message(message.chat.id, "Выберите действие:" if lang == "🇷🇺 Русский" else "בחר פעולה:", reply_markup=markup)
+    bot.send_message(
+        message.chat.id,
+        "Выберите действие:" if lang == "🇷🇺 Русский" else "בחר פעולה:",
+        reply_markup=markup
+    )
 
 # Обработка меню
 @bot.message_handler(func=lambda message: message.text in ["📋 Меню", "📋 תַפְרִיט"])
