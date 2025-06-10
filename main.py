@@ -29,6 +29,9 @@ def show_photos(message):
             bot.send_photo(message.chat.id, photo1, caption="⛵ Хачапури-лодочка\n💰 50 шекелей\n🕒 15:00–21:00")
         with open("images/khachapuri_round.jpg", "rb") as photo2:
             bot.send_photo(message.chat.id, photo2, caption="🍳 Хачапури-круглый\n💰 50 шекелей\n🕒 15:00–21:00")
+        with open("images/pizza.jpg", "rb") as photo3:
+            bot.send_photo(message.chat.id, photo3, caption="🍕 Пицца\n💰 50 шекелей\n🕒 15:00–21:00")
+        
     except Exception as e:
         bot.send_message(message.chat.id, "Ошибка при загрузке изображений.")
 
