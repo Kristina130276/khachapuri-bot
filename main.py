@@ -31,15 +31,16 @@ def show_photos(message):
     lang = message.text  # определяем язык по кнопке
     try:
         with open("images/khachapuri_boat.jpg", "rb") as photo1:
-            caption1 = "🔺 חצ'פורי סירה\n💰 50 ש\"ח 🕒 15:00–21:00" if lang not in ["📋 Меню", "📋 תפריט", "תפריט", "תפריט"] else "🔺 Хачапури-лодочка\n💰 50 шекелей 🕒 15:00–21:00"
+            caption1 = "⚠️ חצ׳פורי סירה\n💰 50 ש\"ח\n🕒 15:00–21:00" if lang != "ru Русский" else "⚠️ Хачапури-лодочка\n💰 50 шекелей\n🕒 15:00–21:00"
             bot.send_photo(message.chat.id, photo1, caption=caption1)
 
         with open("images/khachapuri_round.jpg", "rb") as photo2:
-            caption2 = "🔍 חצ'פורי עגול\n💰 50 ש\"ח 🕒 15:00–21:00" if lang not in ["📋 Меню", "📋 תפריט", "תפריט", "תפריט"] else "🔍 Хачапури-круглый\n💰 50 шекелей 🕒 15:00–21:00"
+            caption2 = "🔍 חצ׳פורי עגול\n💰 50 ש\"ח\n🕒 15:00–21:00" if lang != "ru Русский" else "🔍 Хачапури-круглый\n💰 50 шекелей\n🕒 15:00–21:00"
             bot.send_photo(message.chat.id, photo2, caption=caption2)
 
         with open("images/pizza.jpg", "rb") as photo3:
-            caption3 = "📍 פיצה\n💰 50 ש\"ח 🕒 15:00–21:00" if lang not in ["📋 Меню", "📋 תפריט", "תפריט", "תפריט"] else "📍 Пицца\n💰 50 шекелей 🕒 15:00–21:00"
+            if lang == "ru Русский":
+            caption3 = "🍕 פיצה\n💰 50 ש\"ח\n🕒 15:00–21:00" if lang != "ru Русский" else "🍕 Пицца\n💰 50 шекелей\n🕒 15:00–21:00"
             bot.send_photo(message.chat.id, photo3, caption=caption3)
             
     except Exception as e:
@@ -49,7 +50,11 @@ def show_photos(message):
     kb = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
     button = telebot.types.KeyboardButton(text="📞 Оставить номер", request_contact=True)
     kb.add(button)
-    bot.send_message(message.chat.id, "Хотите, чтобы мы вам перезвонили?", reply_markup=kb)
+   if lang == "ru Русский":
+    text = "Хотите, чтобы мы вам перезвонили?"
+else:
+    text = "רוצים שנחזור אליכם?"
+bot.send_message(message.chat.id, text, reply_markup=kb)
 
 # Получение телефона
 @bot.message_handler(content_types=['contact'])
