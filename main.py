@@ -39,7 +39,7 @@ def show_photos(message):
             bot.send_photo(message.chat.id, photo2, caption=caption2)
 
         with open("images/pizza.jpg", "rb") as photo3:
-           caption3 = "🔍 פיצה\n💰 50 ש\"ח\n🕒 15:00–21:00" if lang != "ru Русский" else "🔍 пицца\n💰 50 шекелей\n🕒 15:00–21:00"
+            caption3 = "🍕 פיצה\n💰 50 ש\"ח\n🕒 15:00–21:00" if lang != "ru Русский" else "🍕 Пицца\n💰 50 шекелей\n🕒 15:00–21:00"
             bot.send_photo(message.chat.id, photo3, caption=caption3)
             
     except Exception as e:
