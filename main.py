@@ -38,8 +38,8 @@ def show_photos(message):
             caption3 = "🍕 Пицца\n💰 50 шекелей\n🕒 15:00–21:00" if lang == "📋 Меню" else "🍕 פיצה\n💰 50 ש\"ח\n🕒 15:00–21:00"
             bot.send_photo(message.chat.id, photo3, caption=caption3)
             
-            except Exception as e:
-            bot.send_message(message.chat.id, "Ошибка при загрузке изображений.")
+    except Exception as e:
+        bot.send_message(message.chat.id, "Ошибка при загрузке изображений.")
 
     # Кнопка для отправки телефона
     kb = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
