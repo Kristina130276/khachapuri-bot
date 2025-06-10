@@ -26,7 +26,7 @@ def show_menu(message):
     )
 
 # Обработка меню
-@bot.message_handler(func=lambda message: message.text in ["📋 Меню", "📋 תַפְרִיט"])
+@bot.message_handler(func=lambda message: message.text in ["📋 Меню", "Меню", "📋 תַפְרִיט", "תַפְרִיט"])
 def show_photos(message):
     lang = message.text  # определяем язык по кнопке
     try:
