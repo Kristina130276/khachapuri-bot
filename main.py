@@ -5,7 +5,7 @@ from flask import Flask, request
 
 API_TOKEN = os.getenv("API_TOKEN")
 bot = telebot.TeleBot(API_TOKEN)
-app = Flask(_name_)
+app = Flask(__name__)
 
 # Команда старт — выбор языка
 @bot.message_handler(commands=['start'])
