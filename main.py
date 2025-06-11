@@ -1,43 +1,56 @@
-# LANGUAGE SELECTION
-from telebot.types import ReplyKeyboardMarkup
+import telebot
+from telebot.types import ReplyKeyboardMarkup, KeyboardButton
+import os
+from flask import Flask, request
 
-def start(update, context):
-    keyboard = [["🇷🇺 Русский", "🇮🇱 עברית"]]
-    reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
-    update.message.reply_text("Пожалуйста, выберите язык / אנא בחר שפה", reply_markup=reply_markup)
+API_TOKEN = os.getenv("API_TOKEN")
+bot = telebot.TeleBot(API_TOKEN)
+app = Flask(_name_)
 
-def handle_language(update, context):
-    user_language = update.message.text
-    context.user_data['lang'] = user_language
-    if user_language == "🇷🇺 Русский":
-        send_menu_ru(update, context)
-    elif user_language == "🇮🇱 עברית":
-        send_menu_il(update, context)
+# Выбор языка
+@bot.message_handler(commands=['start'])
+def send_welcome(message):
+    markup = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+    markup.add("ru Русский", "il עברית")
+    bot.send_message(message.chat.id, "Пожалуйста, выберите язык / אנא בחר שפה", reply_markup=markup)
 
-def send_menu_ru(update, context):
-    photo_file = open("images/khachapuri.jpg", "rb")
-    caption = "🥟 Хачапури по-имеретински — 50 шекелей.\nХотите, чтобы мы вам перезвонили?"
-    update.message.reply_photo(photo=photo_file, caption=caption)
+# После выбора языка — меню
+@bot.message_handler(func=lambda message: message.text in ["ru Русский", "il עברית"])
+def show_menu(message):
+    lang = message.text
+    markup = ReplyKeyboardMarkup(resize_keyboard=True)
+    if "Русский" in lang:
+        markup.add("📁 Меню")
+        text = "Выберите действие:"
+    else:
+        markup.add("📁 תפריט")
+        text = "בחר פעולה:"
+    bot.send_message(message.chat.id, text, reply_markup=markup)
 
-def send_menu_il(update, context):
-    photo_file = open("images/khachapuri.jpg", "rb")
-    caption = "🥟 חצ'פורי חם עם גבינה — 50 ש" + "\"ח.\nרוצים שנחזור אליכם?"
-    update.message.reply_photo(photo=photo_file, caption=caption)
+# Обработка меню
+@bot.message_handler(func=lambda message: message.text.strip() in ["📁 Меню", "📁 תפריט"])
+def show_photos(message):
+    lang = message.text
+    try:
+        with open("images/khachapuri_boat.jpg", "rb") as photo1:
+            caption1 = "🔺 חצ'אפורי סירה\n💰 50 ש"ח\n🕒 15:00–21:00" if lang != "ru Русский" else "🔺 Хачапури-лодочка\n💰 50 шекелей\n🕒 15:00–21:00"
+            bot.send_photo(message.chat.id, photo1, caption=caption1)
 
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+        with open("images/khachapuri_round.jpg", "rb") as photo2:
+            caption2 = "🔍 חצ'אפורי עגול\n💰 50 ש"ח\n🕒 15:00–21:00" if lang != "ru Русский" else "🔍 Хачапури-круглый\n💰 50 шекелей\n🕒 15:00–21:00"
+            bot.send_photo(message.chat.id, photo2, caption=caption2)
 
-def main():
-    updater = Updater("YOUR_BOT_TOKEN", use_context=True)
-    dp = updater.dispatcher
+    except Exception as e:
+        bot.send_message(message.chat.id, "Ошибка при загрузке изображений.")
 
-    dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_language))
+# Flask webhook
+@app.route('/', methods=['POST'])
+def webhook():
+    json_string = request.get_data().decode('utf-8')
+    update = telebot.types.Update.de_json(json_string)
+    bot.process_new_updates([update])
+    return ''
 
-    updater.start_polling()
-    updater.idle()
-
-if __name__ == '__main__':
-    main()
-
-
+if _name_ == '_main_':
+    app.run(debug=False, port=5000)
 
