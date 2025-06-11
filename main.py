@@ -31,15 +31,15 @@ def show_photos(message):
     lang = message.text  # определяем язык по кнопке
     try:
         with open("images/khachapuri_boat.jpg", "rb") as photo1:
-            caption1 = "🔺 חצ'פורי סירה\n💰 50 ש""ח\n🕒 15:00-21:00" if "Русский" not in lang else "🔺 Хачапури-лодочка\n💰 50 шекелей\n🕒 15:00–21:00"
+            caption1 = "🔺 חצ'פורי סירה\n💰 50 ש\""ח\n🕒 15:00-21:00" if "Русский" not in lang else "🔺 Хачапури-лодочка\n💰 50 шекелей\n🕒 15:00–21:00"
             bot.send_photo(message.chat.id, photo1, caption=caption1)
 
         with open("images/khachapuri_round.jpg", "rb") as photo2:
-            caption2 = "🔍 חצ'פורי עגול\n💰 50 ש""ח\n🕒 15:00-21:00" if "Русский" not in lang else "🔍 Хачапури-круглый\n💰 50 шекелей\n🕒 15:00–21:00"
+            caption2 = "🔍 חצ'פורי עגול\n💰 50 ש\""ח\n🕒 15:00-21:00" if "Русский" not in lang else "🔍 Хачапури-круглый\n💰 50 шекелей\n🕒 15:00–21:00"
             bot.send_photo(message.chat.id, photo2, caption=caption2)
 
         with open("images/pizza.jpg", "rb") as photo3:
-            caption3 = "🍕 פיצה\n💰 50 ש""ח\n🕒 15:00-21:00" if "Русский" not in lang else "🍕 Пицца\n💰 50 шекелей\n🕒 15:00–21:00"
+            caption3 = "🍕 פיצה\n💰 50 ש\""ח\n🕒 15:00-21:00" if "Русский" not in lang else "🍕 Пицца\n💰 50 шекелей\n🕒 15:00–21:00"
             bot.send_photo(message.chat.id, photo3, caption=caption3)
 
     except Exception as e:
@@ -53,9 +53,6 @@ def ask_for_phone(message):
     button = telebot.types.KeyboardButton(text="📞 Отправить номер" if "Русский" in lang else "📞 שלח מספר", request_contact=True)
     kb.add(button)
     bot.send_message(message.chat.id, "Хотите, чтобы мы вам перезвонили?" if "Русский" in lang else "רוצים שנחזור אליכם?", reply_markup=kb)
-
-
-    
 
 
 
