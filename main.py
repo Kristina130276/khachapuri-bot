@@ -55,8 +55,6 @@ def ask_for_phone(message):
     bot.send_message(message.chat.id, "Хотите, чтобы мы вам перезвонили?" if "Русский" in lang else "רוצים שנחזור אליכם?", reply_markup=kb)
 
 
-
-
     
 
 
