@@ -1,68 +1,43 @@
-from flask import Flask, request
-import telebot
-import os
+# LANGUAGE SELECTION
+from telegram import ReplyKeyboardMarkup
 
-API_TOKEN = os.getenv("API_TOKEN")
-bot = telebot.TeleBot(API_TOKEN)
-app = Flask(__name__)
+def start(update, context):
+    keyboard = [["🇷🇺 Русский", "🇮🇱 עברית"]]
+    reply_markup = ReplyKeyboardMarkup(keyboard, one_time_keyboard=True, resize_keyboard=True)
+    update.message.reply_text("Пожалуйста, выберите язык / אנא בחר שפה", reply_markup=reply_markup)
 
-# Словарь для хранения выбранного языка пользователем
-user_lang = {}
+def handle_language(update, context):
+    user_language = update.message.text
+    context.user_data['lang'] = user_language
+    if user_language == "🇷🇺 Русский":
+        send_menu_ru(update, context)
+    elif user_language == "🇮🇱 עברית":
+        send_menu_il(update, context)
 
-# Стартовая команда — выбор языка
-@bot.message_handler(commands=['start'])
-def send_welcome(message):
-    markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    markup.add("ru Русский", "il עברית")
-    bot.send_message(message.chat.id, "Пожалуйста, выберите язык / אנא בחר שפה", reply_markup=markup)
+def send_menu_ru(update, context):
+    photo_file = open("images/khachapuri.jpg", "rb")
+    caption = "🥟 Хачапури по-имеретински — 50 шекелей.\nХотите, чтобы мы вам перезвонили?"
+    update.message.reply_photo(photo=photo_file, caption=caption)
 
-# После выбора языка — показать меню
-@bot.message_handler(func=lambda message: message.text in ["ru Русский", "il עברית"])
-def show_menu(message):
-    lang = message.text
-    user_lang[message.chat.id] = lang
+def send_menu_il(update, context):
+    photo_file = open("images/khachapuri.jpg", "rb")
+    caption = "🥟 חצ'פורי חם עם גבינה — 50 ש" + "\"ח.\nרוצים שנחזור אליכם?"
+    update.message.reply_photo(photo=photo_file, caption=caption)
 
-    markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
-    if "Русский" in lang:
-        markup.add("📁 Меню")
-        bot.send_message(message.chat.id, "Выберите действие:", reply_markup=markup)
-    else:
-        markup.add("📁 תפריט")
-        bot.send_message(message.chat.id, "בחר פעולה:", reply_markup=markup)
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
-# Показать фото хачапури по кнопке меню
-@bot.message_handler(func=lambda message: message.text.strip() in ["📁 Меню", "📁 תפריט"])
-def show_photos(message):
-    lang = user_lang.get(message.chat.id, "ru Русский")  # если вдруг нет — по умолчанию русский
-    try:
-        with open("images/khachapuri_boat.jpg", "rb") as photo1:
-            caption1 = "🔺 חצ׳אפורי סירה\n💰 50 ש" + "\n🕒 15:00–21:00" if "Русский" not in lang else "🔺 Хачапури-лодочка\n💰 50 шекелей\n🕒 15:00–21:00"
-            bot.send_photo(message.chat.id, photo1, caption=caption1)
+def main():
+    updater = Updater("YOUR_BOT_TOKEN", use_context=True)
+    dp = updater.dispatcher
 
-        with open("images/khachapuri_round.jpg", "rb") as photo2:
-            caption2 = "🔍 חצ׳אפורי עגול\n💰 50 ש" + "\n🕒 15:00–21:00" if "Русский" not in lang else "🔍 Хачапури-круглый\n💰 50 шекелей\n🕒 15:00–21:00"
-            bot.send_photo(message.chat.id, photo2, caption=caption2)
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_language))
 
-    except Exception as e:
-        bot.send_message(message.chat.id, "Ошибка при загрузке изображений.")
-
-# Кнопка для отправки телефона
-@bot.message_handler(func=lambda message: message.text in ["📞 Оставить номер", "📞 להשאיר מספר"])
-def ask_phone(message):
-    lang = user_lang.get(message.chat.id, "ru Русский")
-    kb = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    btn = telebot.types.KeyboardButton(text="📞 Отправить номер" if "Русский" in lang else "📞 שלח מספר", request_contact=True)
-    kb.add(btn)
-    bot.send_message(message.chat.id, "Хотите, чтобы мы вам перезвонили?" if "Русский" in lang else "רוצה שנחזור אליך?", reply_markup=kb)
-
-@app.route('/', methods=['POST'])
-def webhook():
-    json_string = request.get_data().decode('utf-8')
-    update = telebot.types.Update.de_json(json_string)
-    bot.process_new_updates([update])
-    return 'ok'
+    updater.start_polling()
+    updater.idle()
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    main()
+
 
 
