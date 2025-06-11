@@ -30,17 +30,17 @@ def show_menu(message):
 def show_photos(message):
     lang = message.text
     try:
-        with open("images/khachapuri_boat.jpg", "rb") as photo1:
-            caption1 = "⚠️ חצ׳פורי סירה\n💰 50 ש"ח\n🕒 15:00–21:00" if lang != "ru Русский" else "⚠️ Хачапури-лодочка\n💰 50 шекелей\n🕒 15:00–21:00"
-            bot.send_photo(message.chat.id, photo1, caption=caption1)
+       with open("images/khachapuri_boat.jpg", "rb") as photo1:
+           caption1 = "🔺 חצ'אפורי סירה\n🪙 50 ש\"ח\n🕒 15:00–21:00" if lang != "ru Русский" else "🔺 Хачапури-лодочка\n🪙 50 шекелей\n🕒 15:00–21:00"
+           bot.send_photo(message.chat.id, photo1, caption=caption1)
 
-        with open("images/khachapuri_round.jpg", "rb") as photo2:
-            caption2 = "🔍 חצ׳פורי עגול\n💰 50 ש"ח\n🕒 15:00–21:00" if lang != "ru Русский" else "🔍 Хачапури-круглый\n💰 50 шекелей\n🕒 15:00–21:00"
-            bot.send_photo(message.chat.id, photo2, caption=caption2)
+       with open("images/khachapuri_round.jpg", "rb") as photo2:
+           caption2 = "🔍 חצ'אפורי עגול\n🪙 50 ש\"ח\n🕒 15:00–21:00" if lang != "ru Русский" else "🔍 Хачапури-круглый\n🪙 50 шекелей\n🕒 15:00–21:00"
+           bot.send_photo(message.chat.id, photo2, caption=caption2)
 
-        with open("images/pizza.jpg", "rb") as photo3:
-            caption3 = "🍕 פיצה\n💰 50 ש"ח\n🕒 15:00–21:00" if lang != "ru Русский" else "🍕 Пицца\n💰 50 шекелей\n🕒 15:00–21:00"
-            bot.send_photo(message.chat.id, photo3, caption=caption3)
+       with open("images/pizza.jpg", "rb") as photo3:
+           caption3 = "🍕 פיצה\n🪙 50 ש\"ח\n🕒 15:00–21:00" if lang != "ru Русский" else "🍕 Пицца\n🪙 50 шекелей\n🕒 15:00–21:00"
+           bot.send_photo(message.chat.id, photo3, caption=caption3)
 
     except Exception as e:
         bot.send_message(message.chat.id, "Ошибка при загрузке изображений.")
@@ -75,4 +75,13 @@ def index():
 
 if __name__ == "__main__":
     app.run(debug=False)
+
+
+
+
+
+    
+
+
+
 
