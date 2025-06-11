@@ -51,5 +51,5 @@ def webhook():
 def index():
     return "Бот работает"
 
-if _name_ == '_main_':
+if __name__ == '__main__':
     app.run()
