@@ -1,5 +1,5 @@
 # LANGUAGE SELECTION
-from telegram import ReplyKeyboardMarkup
+from telebot.types import ReplyKeyboardMarkup
 
 def start(update, context):
     keyboard = [["🇷🇺 Русский", "🇮🇱 עברית"]]
