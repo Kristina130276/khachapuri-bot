@@ -67,7 +67,7 @@ def show_photos(message):
 # Обработка номера телефона
 @bot.message_handler(content_types=['contact'])
 def handle_contact(message):
-    admin_id = 123456789  # <-- замени на свой ID
+    admin_id = 1485434212
     phone = message.contact.phone_number
     name = message.contact.first_name
     bot.send_message(admin_id, f"📞 Новый клиент: {name}, номер: {phone}")
