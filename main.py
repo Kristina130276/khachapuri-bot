@@ -78,6 +78,82 @@ def handle_contact(message):
 def webhook():
     bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
     return "OK", 200
+# ➕ Кнопка "Оформить заказ" после меню
+def show_order_button(chat_id, lang):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+    button_text = "✅ Оформить заказ" if "Русский" in lang else "✅ להזמין"
+    markup.add(button_text)
+    bot.send_message(
+        chat_id,
+        "☎️ Хотите оформить заказ прямо сейчас?" if "Русский" in lang else "?רוצה להזמין עכשיו",
+        reply_markup=markup
+    )
+
+# ➕ Русский диалог оформления заказа
+@bot.message_handler(func=lambda message: message.text.strip() == "✅ Оформить заказ")
+def start_order_flow(message):
+    chat_id = message.chat.id
+    bot.send_message(chat_id, "🍽 Какой хачапури вы хотите?\n1️⃣ Круглый\n2️⃣ Лодочка")
+    bot.register_next_step_handler(message, ask_quantity)
+
+def ask_quantity(message):
+    chat_id = message.chat.id
+    hachapuri_type = message.text
+    bot.send_message(chat_id, "🧮 Сколько штук?")
+    bot.register_next_step_handler(message, ask_time, hachapuri_type)
+
+def ask_time(message, hachapuri_type):
+    chat_id = message.chat.id
+    quantity = message.text
+    bot.send_message(chat_id, "⏰ На какое время?")
+    bot.register_next_step_handler(message, finish_order, (hachapuri_type, quantity))
+
+def finish_order(message, data):
+    chat_id = message.chat.id
+    hachapuri_type, quantity = data
+    time = message.text
+    text = (
+        f"📦 Новый заказ:\n"
+        f"🍕 Тип: {hachapuri_type}\n"
+        f"🔢 Кол-во: {quantity}\n"
+        f"🕒 Время: {time}\n\n"
+        f"📞 [Связаться по WhatsApp](https://wa.me/972534869901)"
+    )
+    bot.send_message(chat_id, text, parse_mode='Markdown')
+    bot.send_message(chat_id, "Спасибо! Мы скоро свяжемся с вами 🙏")
+
+# ➕ Иврит-версия
+@bot.message_handler(func=lambda message: message.text.strip() == "✅ להזמין")
+def start_order_flow_he(message):
+    chat_id = message.chat.id
+    bot.send_message(chat_id, "🍽 איזה חצ'אפורי את/ה רוצה?\n1️⃣ עגול\n2️⃣ סירה")
+    bot.register_next_step_handler(message, ask_quantity_he)
+
+def ask_quantity_he(message):
+    chat_id = message.chat.id
+    hachapuri_type = message.text
+    bot.send_message(chat_id, "🧮 כמה יחידות?")
+    bot.register_next_step_handler(message, ask_time_he, hachapuri_type)
+
+def ask_time_he(message, hachapuri_type):
+    chat_id = message.chat.id
+    quantity = message.text
+    bot.send_message(chat_id, "⏰ לאיזו שעה להכין?")
+    bot.register_next_step_handler(message, finish_order_he, (hachapuri_type, quantity))
+
+def finish_order_he(message, data):
+    chat_id = message.chat.id
+    hachapuri_type, quantity = data
+    time = message.text
+    text = (
+        f"📦 הזמנה חדשה:\n"
+        f"🍕 סוג: {hachapuri_type}\n"
+        f"🔢 כמות: {quantity}\n"
+        f"🕒 שעה: {time}\n\n"
+        f"📞 [ליצור קשר ב-WhatsApp](https://wa.me/972534869901)"
+    )
+    bot.send_message(chat_id, text, parse_mode='Markdown')
+    bot.send_message(chat_id, "תודה! נחזור אליך בהקדם 🙏")
 
 if __name__ == "__main__":
     bot.remove_webhook()
