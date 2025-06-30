@@ -111,4 +111,50 @@ if __name__ == '__main__':
     bot.remove_webhook()
     bot.set_webhook(url="https://khachapuri-bot-1.onrender.com/")  # замени при необходимости
     app.run(host="0.0.0.0", port=5000)
+# 🧾 Оформление заказа после того как клиент оставил номер
+@bot.message_handler(func=lambda message: message.text.strip() in ["✅ Оформить заказ", "✅ להזמין"])
+def start_order_flow(message):
+    chat_id = message.chat.id
+    lang = user_lang.get(chat_id, "")
+    if "Русский" in lang:
+        bot.send_message(chat_id, "🚚 Самовывоз или доставка?", reply_markup=types.ReplyKeyboardMarkup(
+            keyboard=[[types.KeyboardButton("Самовывоз")], [types.KeyboardButton("Доставка")]],
+            resize_keyboard=True, one_time_keyboard=True
+        ))
+    else:
+        bot.send_message(chat_id, "🚚 איסוף עצמי או משלוח?", reply_markup=types.ReplyKeyboardMarkup(
+            keyboard=[[types.KeyboardButton("איסוף עצמי")], [types.KeyboardButton("משלוח")]],
+            resize_keyboard=True, one_time_keyboard=True
+        ))
+    bot.register_next_step_handler(message, ask_pickup_or_delivery)
+
+def ask_pickup_or_delivery(message):
+    chat_id = message.chat.id
+    lang = user_lang.get(chat_id, "")
+    choice = message.text.strip()
+    if choice in ["Доставка", "משלוח"]:
+        if "Русский" in lang:
+            bot.send_message(chat_id, "📍 Пожалуйста, напишите адрес доставки:")
+        else:
+            bot.send_message(chat_id, "📍 אנא כתבו את כתובת המשלוח:")
+        bot.register_next_step_handler(message, ask_address)
+    else:
+        if "Русский" in lang:
+            bot.send_message(chat_id, "✅ Самовывоз: עמשא 12, אופקים")
+            bot.send_message(chat_id, "Спасибо! Мы скоро с вами свяжемся.")
+        else:
+            bot.send_message(chat_id, "✅ איסוף עצמי: עמשא 12, אופקים")
+            bot.send_message(chat_id, "תודה! ניצור איתך קשר בהקדם.")
+
+def ask_address(message):
+    chat_id = message.chat.id
+    lang = user_lang.get(chat_id, "")
+    address = message.text.strip()
+    if "Русский" in lang:
+        bot.send_message(chat_id, f"🚗 Спасибо! Ваш адрес: {address}\nК заказу добавлено +20 шекелей за доставку.")
+        bot.send_message(chat_id, "Мы скоро с вами свяжемся!")
+    else:
+        bot.send_message(chat_id, f"🚗 תודה! הכתובת שלך: {address}\nנוספו 20 ש״ח למשלוח.")
+        bot.send_message(chat_id, "ניצור איתך קשר בהקדם.")
+
 
